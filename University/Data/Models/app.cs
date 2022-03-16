@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace University.Data.Models
 {
-    public class Uni
+    public class app
     {
     }
 }

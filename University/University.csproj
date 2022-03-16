@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Context\" />
     <Folder Include="Data\Models\" />
   </ItemGroup>
 

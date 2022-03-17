@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using University.Data.Models.User;
 
 namespace University.Data.Context
 {
@@ -11,6 +12,8 @@ namespace University.Data.Context
         public UniDbContext(DbContextOptions<UniDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Student> Students { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

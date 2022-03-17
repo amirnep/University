@@ -15,10 +15,10 @@ namespace University.Data.Models.User
         {
         }
 
-        public int StudentId { get; set; }
+        public int Id { get; set; }
 
-        [Required(ErrorMessage = "Enter Student Id.")]
-        public string ID { get; set; }
+        [Required(ErrorMessage = "Enter Your Id.")]
+        public string StudentId { get; set; }
 
         [Required(ErrorMessage = "Enter Your Name.")]
         [Column(TypeName = "nvarchar(20)")]

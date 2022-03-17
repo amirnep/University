@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using University.Data.Context;
 using University.Data.Models;
@@ -134,6 +136,66 @@ namespace University.Controllers
             _uniDbContext.Admins.Add(adminObj);
             _uniDbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        //Post api --> Login
+        [HttpPost]
+        public IActionResult Login([FromBody] Login login)
+        {
+            var Student = _uniDbContext.Students.FirstOrDefault(u => u.StudentId == login.Id);
+            if (Student == null)
+            {
+                return NotFound();
+            }
+
+            var Teacher = _uniDbContext.Teachers.FirstOrDefault(u => u.TeacherId == login.Id);
+            if (Teacher == null)
+            {
+                return NotFound();
+            }
+
+            var Admin = _uniDbContext.Admins.FirstOrDefault(u => u.AdminId == login.Id);
+            if (Admin == null)
+            {
+                return NotFound();
+            }
+            //-----------------------------------------------------------------------------------
+            if (!SecurePasswordHasherHelper.Verify(login.Password, Student.Password))
+            {
+                return Unauthorized();
+            }
+
+            if (!SecurePasswordHasherHelper.Verify(login.Password, Teacher.Password))
+            {
+                return Unauthorized();
+            }
+
+            if (!SecurePasswordHasherHelper.Verify(login.Password, Admin.Password))
+            {
+                return Unauthorized();
+            }
+            //------------------------------------------------------------------------------------
+
+            var claims = new[]
+            {
+               new Claim(JwtRegisteredClaimNames.Email, login.Id),
+               new Claim(ClaimTypes.Email, login.Id),
+               new Claim(ClaimTypes.Role,Student.Role),
+               new Claim(ClaimTypes.Role,Teacher.Role),
+               new Claim(ClaimTypes.Role,Admin.Role)
+            };
+            var token = _auth.GenerateAccessToken(claims);
+            return new ObjectResult(new
+            {
+                access_token = token.AccessToken,
+                expires_in = token.ExpiresIn,
+                token_type = token.TokenType,
+                creation_Time = token.ValidFrom,
+                expiration_Time = token.ValidTo,
+                student_id = Student.StudentId,
+                teacher_id = Teacher.TeacherId,
+                admin_id = Admin.AdminId
+            });
         }
     }
 }

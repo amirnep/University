@@ -8,8 +8,11 @@ namespace University.Data.Models
 {
     public class Login
     {
+        [Required(ErrorMessage = "Enter Your Role.")]
+        public string Role { get; set; }
+
         [Required(ErrorMessage = "Enter Your Student Id.")]
-        public string StudentId { get; set; }
+        public string Id { get; set; }
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Enter Your Password.")]
